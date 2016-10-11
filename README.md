@@ -42,6 +42,25 @@ Usage
 ----------------
 View the source of `src/Client.php` for all the available methods.
 
+Contributing
+------------
+Please create pull requests. Hopefully pull requests will be reviewed within a couple of days. In general don't merge your own pull requests. Operations will be available with just the addition of a the operation in the `service.json` file as long as you are using `$client->getFoo()->getResult()` but most of the operations have their own access methods with simplified argument handling. Operations do not need to have their own response class unless it does something special. Please respect semantic versioning in this project. That means no break in backwards compatibility unless a major version change is being planned.
+
+Example of the simplest addition of a new operation:
+
+```json
+{
+    "operations": {
+        "getFoo": {
+            "httpMethod": "GET",
+            "uri": "foo.json",
+            "parameters": {},
+            "responseModel": "baseResponse",
+            "responseClass": "CSD\\Marketo\\Response"
+        },
+}
+```
+
 License
 ----------------
 This source is licensed under an MIT License, see the LICENSE file for full details. If you use this code, it would be great to hear from you.
