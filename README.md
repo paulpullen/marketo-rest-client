@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/MarketoCommunity/marketo-rest-client.svg?branch=master)](https://travis-ci.org/MarketoCommunity/marketo-rest-client)
+
 Marketo REST API Client
 ================
 Unofficial PHP client for the Marketo.com REST API: http://developers.marketo.com/documentation/rest/. Requires PHP 5.3.3+
