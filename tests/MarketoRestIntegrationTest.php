@@ -7,7 +7,7 @@ use CSD\Marketo\Response\GetActivityTypesResponse;
 use CSD\Marketo\Response\GetLeadActivityResponse;
 
 /**
- * @group marketo-rest-api-integration
+ * @group marketo-rest-client-integration
  */
 class MarketoRestIntegrationTest extends \PHPUnit_Framework_TestCase {
 
@@ -74,38 +74,4 @@ class MarketoRestIntegrationTest extends \PHPUnit_Framework_TestCase {
         // @todo: figure out how to rest \CSD\Marketo\Response::fromCommand().
     }
 
-    public function testGetFields() {
-        $client = $this->_getClient();
-        $response = $client->getFields();
-
-        self::assertTrue($response->isSuccess());
-        self::assertNull($response->getError());
-        self::assertNotEmpty($response->getFields());
-    }
-
-    public function testGetActivityTypes() {
-        $client = $this->_getClient();
-        /** @var GetActivityTypesResponse $response */
-        $response = $client->getActivityTypes();
-
-        self::assertTrue($response->isSuccess());
-        self::assertNull($response->getError());
-        self::assertNotEmpty($response->getActivityTypes());
-    }
-
-    public function testGetLeadActivity() {
-        $client = $this->_getClient();
-        // Get activity types, needed for $activityTypesIds.
-        $activity_types = $client->getActivityTypes()->getResult();
-        // Get only the ids of the activity types.
-        $activity_types_ids = array_map(function ($type) {return $type['id'];}, $activity_types);
-        /** @var GetLeadActivityResponse $response */
-        $response = $client->getLeadActivity($client->getPagingToken(date('c'))->getNextPageToken(), [1], array_slice($activity_types_ids, 0, 10));
-
-        self::assertTrue($response->isSuccess());
-        self::assertNull($response->getError());
-
-        // No activity found in the sandbox so don't check the response for usable data.
-//        self::assertNotEmpty($response->getLeadActivity());
-    }
 }

@@ -10,9 +10,22 @@ use Guzzle\Tests\GuzzleTestCase;
 use Guzzle\Tests\Service\Mock\Command\MockCommand;
 
 /**
- * @group marketo-rest-api
+ * @group marketo-rest-client
  */
 class MarketoSoapClientTest extends GuzzleTestCase {
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        /** @var \CSD\Marketo\Client $client */
+        $client = $this->_getClient();
+
+        // Queue up a response for getCampaigns as well as getCampaign (by ID).
+        $this->getServer()->enqueue($this->generateResponses(200, '{"requestId":"e6be#157b5944116","success":true,"nextPageToken":"OAPD51234567890KBPLTBBZIC7KKF5FR5Y2VQGENTYVAOZ7EF3YQ===="}', TRUE));
+
+        $client->getPagingToken(date('c'));
+    }
 
     /**
      * Gets the marketo rest client.
@@ -67,7 +80,7 @@ class MarketoSoapClientTest extends GuzzleTestCase {
         // Campaign response json.
         $response_json = '{"requestId": "f81c#157b104ca98","result": [{ "id": 1004, "name": "Foo", "description": " ", "type": "trigger", "workspaceName": "Default","createdAt": "2012-09-12T19:04:12Z","updatedAt": "2014-10-22T15:51:18Z","active": false}],"success": true}';
         // Queue up a response for getCampaigns as well as getCampaign (by ID).
-        $this->getServer()->enqueue($this->generateResponses(200, [$response_json, $response_json], TRUE));
+        $this->getServer()->enqueue($this->generateResponses(200, [$response_json, $response_json]));
 
         $client = $this->_getClient();
         $campaigns = $client->getCampaigns()->getResult();
@@ -118,56 +131,7 @@ class MarketoSoapClientTest extends GuzzleTestCase {
         // No assertion but make sure getNextPageToken doesn't error out.
         $response->getNextPageToken();
 
-        self::assertEquals(serialize($response->getResult()), serialize($response->getCampaigns()));
         // @todo: figure out how to rest \CSD\Marketo\Response::fromCommand().
-    }
-
-    public function testGetFields() {
-        // Queue up a response for getFields request.
-        $this->getServer()->enqueue($this->generateResponses(200,'{"requestId":"fb0#157b1501f31","result":[{"id":48,"displayName":"First Name","dataType":"string","length":255,"rest":{"name":"firstName","readOnly":false},"soap":{"name":"FirstName","readOnly":false}},{"id":50,"displayName":"Last Name","dataType":"string","length":255,"rest":{"name":"lastName","readOnly":false},"soap":{"name":"LastName","readOnly":false}},{"id":51,"displayName":"Email Address","dataType":"email","length":255,"rest":{"name":"email","readOnly":false},"soap":{"name":"Email","readOnly":false}},{"id":60,"displayName":"Address","dataType":"text","rest":{"name":"address","readOnly":false},"soap":{"name":"Address","readOnly":false}}],"success":true}'));
-
-        $client = $this->_getClient();
-        $response = $client->getFields();
-
-        self::assertTrue($response->isSuccess());
-        self::assertNull($response->getError());
-        self::assertNotEmpty($response->getFields());
-    }
-
-    public function testGetActivityTypes() {
-        // Queue up a response for getActivityTypes request.
-        $this->getServer()->enqueue($this->generateResponses(200,'{"requestId":"6e78#148ad3b76f1","success":true,"result":[{"id":2,"name":"Fill Out Form","description":"User fills out and submits form on web page","primaryAttribute":{"name":"Webform ID","dataType":"integer"},"attributes":[{"name":"Client IP Address","dataType":"string"},{"name":"Form Fields","dataType":"text"},{"name":"Query Parameters","dataType":"string"},{"name":"Referrer URL","dataType":"string"},{"name":"User Agent","dataType":"string"},{"name":"Webpage ID","dataType":"integer"}]}]}'));
-
-        $client = $this->_getClient();
-        /** @var GetActivityTypesResponse $response */
-        $response = $client->getActivityTypes();
-
-        self::assertTrue($response->isSuccess());
-        self::assertNull($response->getError());
-        self::assertNotEmpty($response->getActivityTypes());
-    }
-
-    public function testGetLeadActivity() {
-        // Queue up a response for getActivityTypes, getPagingToken and getLeadActivity requests.
-        $this->getServer()->enqueue($this->generateResponses(200,[
-            '{"requestId":"6e78#148ad3b76f1","success":true,"result":[{"id":2,"name":"Fill Out Form","description":"User fills out and submits form on web page","primaryAttribute":{"name":"Webform ID","dataType":"integer"},"attributes":[{"name":"Client IP Address","dataType":"string"},{"name":"Form Fields","dataType":"text"},{"name":"Query Parameters","dataType":"string"},{"name":"Referrer URL","dataType":"string"},{"name":"User Agent","dataType":"string"},{"name":"Webpage ID","dataType":"integer"}]}]}',
-            '{"requestId":"f84c#157b16681eb","success":true,"nextPageToken":"JXBIK3O6SUWULQ12345678Y57ZJCBBZRGHQV57IZSKSLYLLU6PPQ===="}',
-            '{"requestId":"24fd#15188a88d7f","result":[{"id":102988,"leadId":1,"activityDate":"2015-01-16T23:32:19Z","activityTypeId":1,"primaryAttributeValueId":71,"primaryAttributeValue":"localhost/munchkintest2.html","attributes":[{"name":"Client IP Address","value":"10.0.19.252"},{"name":"Query Parameters","value":""},{"name":"Referrer URL","value":""},{"name":"User Agent","value":"Mozilla/5.0(Windows NT6.1;WOW64)AppleWebKit/537.36(KHTML,like Gecko)Chrome/39.0.2171.95Safari/537.36"},{"name":"Webpage URL","value":"/munchkintest2.html"}]}],"success":true,"nextPageToken":"WQV2VQVPPCKHC6AQYVK7JDSA3J62DUSJ3EXJGDPTKPEBFW3SAVUA====","moreResult":false}',
-        ]));
-
-        $client = $this->_getClient();
-        // Get activity types, needed for $activityTypesIds.
-        $activity_types = $client->getActivityTypes()->getResult();
-        // Get only the ids of the activity types.
-        $activity_types_ids = array_map(function ($type) {return $type['id'];}, $activity_types);
-        /** @var GetLeadActivityResponse $response */
-        $response = $client->getLeadActivity($client->getPagingToken(date('c'))->getNextPageToken(), [1], array_slice($activity_types_ids, 0, 10));
-
-        self::assertTrue($response->isSuccess());
-        self::assertNull($response->getError());
-
-        // No activity found in the sandbox so don't check the response for usable data.
-//        self::assertNotEmpty($response->getLeadActivity());
     }
 
     protected function generateResponses($status_code, $response_data, $add_token_response = FALSE) {

@@ -227,7 +227,7 @@
                 "fromName": {"location": "query"},
                 "replyTo": {"location": "query"}
             },
-            "responseClass": "CSD\\Marketo\\Response\\UpdateEmailContentReponse"
+            "responseClass": "CSD\\Marketo\\Response\\UpdateEmailContentResponse"
         },
         "updateEmailContentInEditableSection": {
             "httpMethod": "POST",
@@ -247,6 +247,39 @@
                 "id": {"location": "uri"}
                 },
             "responseClass": "CSD\\Marketo\\Response\\ApproveEmailResponse"
+        }
+    },
+    "models": {
+        "baseResponse": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "string",
+                    "required": true
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "The error code."
+                            },
+                            "message": {
+                                "type": "string",
+                                "description": "The detailed message from the server."
+                            }
+                        }
+                    }
+                }
+            },
+            "additionalProperties": {
+                "location": "json"
+            }
         }
     }
 }
