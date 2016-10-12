@@ -266,6 +266,13 @@
                 "dedupeBy": {"location": "json"}
             },
             "responseClass": "CSD\\Marketo\\Response\\GetLeadsResponse"
+        },
+        "getActivityTypes": {
+            "httpMethod": "GET",
+            "uri": "activities/types.json",
+            "parameters": {},
+            "responseModel": "baseResponse",
+            "responseClass": "CSD\\Marketo\\Response"
         }
     },
     "models": {

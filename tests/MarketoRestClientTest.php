@@ -156,22 +156,20 @@ class MarketoSoapClientTest extends GuzzleTestCase {
         $client = $this->_getClient();
         $leadFields = $client->describeLeads()->getResult();
 
-        self::assertEquals($leadFields[0],
-            [
-                'id' => 48,
-                'displayName' => 'First Name',
-                'dataType' => 'string',
-                'length' => 255,
-                'rest' => [
-                    'name' => 'firstName',
-                    'readOnly' => false],
-                'soap' => [
-                    'name' => 'FirstName',
-                    'readOnly' => false,
-                ],
-            ]
-        );
+        self::assertEquals($leadFields[0]['displayName'], 'First Name');
     }
 
+    public function testGetActivityTypes() {
+        // Queue up a response for getActivityTypes request.
+        $this->getServer()->enqueue($this->generateResponses(200,'{"requestId":"6e78#148ad3b76f1","success":true,"result":[{"id":2,"name":"Fill Out Form","description":"User fills out and submits form on web page","primaryAttribute":{"name":"Webform ID","dataType":"integer"},"attributes":[{"name":"Client IP Address","dataType":"string"},{"name":"Form Fields","dataType":"text"},{"name":"Query Parameters","dataType":"string"},{"name":"Referrer URL","dataType":"string"},{"name":"User Agent","dataType":"string"},{"name":"Webpage ID","dataType":"integer"}]}]}'));
+
+        $client = $this->_getClient();
+        /** @var \CSD\Marketo\Response $response */
+        $response = $client->getActivityTypes();
+
+        self::assertTrue($response->isSuccess());
+        self::assertNull($response->getError());
+        self::assertEquals('Fill Out Form', $response->getResult()[0]['name']);
+    }
 
 }
