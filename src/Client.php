@@ -520,7 +520,7 @@ class Client extends GuzzleClient
      *
      * @link http://developers.marketo.com/documentation/rest/request-campaign/
      *
-     * @return RequestCampaignResponse
+     * @return \CSD\Marketo\Response|string
      */
     public function requestCampaign($id, $leads, $tokens = array(), $args = array(), $returnRaw = false)
     {
@@ -547,7 +547,7 @@ class Client extends GuzzleClient
      *
      * @link http://developers.marketo.com/documentation/rest/schedule-campaign/
      *
-     * @return ScheduleCampaignResponse
+     * @return \CSD\Marketo\Response|string
      */
     public function scheduleCampaign($id, \DateTime $runAt = NULL, $tokens = array(), $args = array(), $returnRaw = false)
     {
@@ -573,7 +573,7 @@ class Client extends GuzzleClient
      *
      * @link http://developers.marketo.com/documentation/rest/associate-lead/
      *
-     * @return AssociateLeadResponse
+     * @return \CSD\Marketo\Response|string
      */
     public function associateLead($id, $cookie = null, $args = array(), $returnRaw = false)
     {
@@ -638,7 +638,7 @@ class Client extends GuzzleClient
      *
      * @link http://developers.marketo.com/documentation/asset-api/update-email-content-by-id/
      *
-     * @return Response
+     * @return \CSD\Marketo\Response|string
      */
     public function updateEmailContent($emailId, $args = array(), $returnRaw = false)
     {
@@ -656,7 +656,7 @@ class Client extends GuzzleClient
      *
      * @link http://developers.marketo.com/documentation/asset-api/update-email-content-in-editable-section/
      *
-     * @return UpdateEmailContentInEditableSectionResponse
+     * @return \CSD\Marketo\Response|string
      */
     public function updateEmailContentInEditableSection($emailId, $htmlId, $args = array(), $returnRaw = false)
     {
@@ -691,7 +691,7 @@ class Client extends GuzzleClient
      * @param array  $args
      * @param bool   $fixArgs
      *
-     * @return Response
+     * @return \CSD\Marketo\Response|string
      */
     private function getResult($command, $args, $fixArgs = false, $returnRaw = false)
     {
