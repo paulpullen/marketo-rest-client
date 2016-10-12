@@ -1,5 +1,5 @@
 {
-    "name": "marketo-community/marketo-rest-client",
+    "name": "marketo-api/marketo-rest-client",
     "description": "A PHP client for the Marketo.com REST API",
     "license": "MIT",
     "require": {

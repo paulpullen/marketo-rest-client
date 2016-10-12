@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/MarketoCommunity/marketo-rest-client.svg?branch=master)](https://travis-ci.org/MarketoCommunity/marketo-rest-client)
+[![Build Status](https://travis-ci.org/marketo-api/marketo-rest-client.svg?branch=master)](https://travis-ci.org/marketo-api/marketo-rest-client)
 
 Marketo REST API Client
 ================
@@ -8,7 +8,7 @@ Installation
 ----------------
 The recommended way of installing the client is via [Composer](http://getcomposer.org/). Simply run the following command to add the library to your composer.json file.
 
-    composer require dchesterton/marketo-rest-api
+    composer require marketo-api/marketo-rest-client
 
 Setup
 ----------------
