@@ -30,13 +30,15 @@ class MarketoSoapClientTest extends GuzzleTestCase {
     /**
      * Gets the marketo rest client.
      *
-     * @return \CSD\Marketo\ClientInterface
+     * @return \CSD\Marketo\Client
      */
     private function _getClient() {
 
         static $client = FALSE;
 
-        if ($client) return $client;
+        if ($client instanceof Client) {
+            return $client;
+        }
 
         $client = Client::factory([
             'url' => $this->getServer()->getUrl(),
@@ -146,4 +148,30 @@ class MarketoSoapClientTest extends GuzzleTestCase {
 
         return $responses;
     }
+
+    public function testDescribeLeads() {
+        // Queue up a response for describeLeads request.
+        $this->getServer()->enqueue($this->generateResponses(200,'{"requestId":"fb0#157b1501f31","result":[{"id":48,"displayName":"First Name","dataType":"string","length":255,"rest":{"name":"firstName","readOnly":false},"soap":{"name":"FirstName","readOnly":false}},{"id":50,"displayName":"Last Name","dataType":"string","length":255,"rest":{"name":"lastName","readOnly":false},"soap":{"name":"LastName","readOnly":false}},{"id":51,"displayName":"Email Address","dataType":"email","length":255,"rest":{"name":"email","readOnly":false},"soap":{"name":"Email","readOnly":false}},{"id":60,"displayName":"Address","dataType":"text","rest":{"name":"address","readOnly":false},"soap":{"name":"Address","readOnly":false}}],"success":true}'));
+
+        $client = $this->_getClient();
+        $leadFields = $client->describeLeads()->getResult();
+
+        self::assertEquals($leadFields[0],
+            [
+                'id' => 48,
+                'displayName' => 'First Name',
+                'dataType' => 'string',
+                'length' => 255,
+                'rest' => [
+                    'name' => 'firstName',
+                    'readOnly' => false],
+                'soap' => [
+                    'name' => 'FirstName',
+                    'readOnly' => false,
+                ],
+            ]
+        );
+    }
+
+
 }

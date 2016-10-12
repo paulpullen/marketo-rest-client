@@ -14,7 +14,7 @@ class MarketoRestIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Gets the marketo rest client.
      *
-     * @return \CSD\Marketo\ClientInterface
+     * @return \CSD\Marketo\Client
      */
     private function _getClient() {
 
