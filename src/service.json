@@ -241,14 +241,53 @@
                 "htmlId": {"location": "uri"},
                 "type": {"location": "query"},
                 "value": {"location": "query"}
-            },
-            "responseModel": "baseResponse",
-            "responseClass": "CSD\\Marketo\\Response"
+                },
+            "responseClass": "CSD\\Marketo\\Response\\UpdateEmailContentInEditableSectionResponse"
         },
         "approveEmailbyId": {
             "httpMethod": "POST",
             "uri": "/rest/asset/v1/email/{id}/approveDraft.json",
-            "parameters": {"id": {"location": "uri"}},
+            "parameters": {
+                "id": {"location": "uri"}
+                },
+            "responseClass": "CSD\\Marketo\\Response\\ApproveEmailResponse"
+        },
+        "describeObject": {
+            "httpMethod": "GET",
+            "uri": "/rest/v1/{objectName}/describe.json",
+            "parameters": {
+                "objectName": {"location": "uri"}
+            },
+            "responseClass": "CSD\\Marketo\\Response"
+        },
+        "createOrUpdateObject": {
+            "httpMethod": "POST",
+            "uri": "/rest/v1/{objectName}.json",
+            "parameters": {
+                "objectName": {"location": "uri"},
+                "action": {"location": "json"},
+                "input": {"location": "json"},
+                "dedupeBy": {"location": "json"}
+            },
+            "responseClass": "CSD\\Marketo\\Response\\GetLeadsResponse"
+        },
+        "getActivityTypes": {
+            "httpMethod": "GET",
+            "uri": "activities/types.json",
+            "parameters": {},
+            "responseModel": "baseResponse",
+            "responseClass": "CSD\\Marketo\\Response"
+        },
+        "getLeadActivity": {
+            "httpMethod": "GET",
+            "uri": "activities.json",
+            "parameters": {
+                "activityTypeIds": {"location": "query"},
+                "nextPageToken": {"location": "query"},
+                "batchSize": {"location": "query"},
+                "listId": {"location": "query"},
+                "leadIds": {"location": "query"}
+            },
             "responseModel": "baseResponse",
             "responseClass": "CSD\\Marketo\\Response"
         }

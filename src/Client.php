@@ -41,6 +41,17 @@ use CSD\Marketo\Response\IsMemberOfListResponse;
 class Client extends GuzzleClient
 {
     /**
+     * @var array
+     */
+    private $marketoObjects = array(
+      'Leads' => 'leads',
+      'Companies' => 'companies',
+      'Opportunities' => 'opportunities',
+      'Opportunities Roles' => 'opportunities/roles',
+      'Sales Persons' => 'salespersons'
+    );
+
+    /**
      * {@inheritdoc}
      */
     public static function factory($config = array())
@@ -114,6 +125,8 @@ class Client extends GuzzleClient
      *
      * @param int $batchId
      *
+     * @throws \Exception
+     *
      * @link http://developers.marketo.com/documentation/rest/get-import-lead-status/
      *
      * @return array
@@ -132,9 +145,11 @@ class Client extends GuzzleClient
      *
      * @param int $batchId
      *
+     * @throws \Exception
+     *
      * @link http://developers.marketo.com/documentation/rest/get-import-failure-file/
      *
-     * @return Guzzle\Http\Message\Response
+     * @return \Guzzle\Http\Message\Response
      */
     public function getBulkUploadFailures($batchId)
     {
@@ -150,9 +165,11 @@ class Client extends GuzzleClient
      *
      * @param int $batchId
      *
+     * @throws \Exception
+     *
      * @link http://developers.marketo.com/documentation/rest/get-import-warning-file/
      *
-     * @return Guzzle\Http\Message\Response
+     * @return \Guzzle\Http\Message\Response
      */
     public function getBulkUploadWarnings($batchId)
     {
@@ -170,6 +187,7 @@ class Client extends GuzzleClient
      * @param array  $leads
      * @param string $lookupField
      * @param array  $args
+     * @param bool   $returnRaw
      *
      * @see Client::createLeads()
      * @see Client::createOrUpdateLeads()
@@ -190,6 +208,186 @@ class Client extends GuzzleClient
         }
 
         return $this->getResult('createOrUpdateLeads', $args, false, $returnRaw);
+    }
+
+    /**
+     * Only update the given opportunity roles.
+     *
+     * @param array       $opportunitiesRoles Array of arrays.
+     * @param string      $dedupeBy
+     * @param array       $args
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/syncOpportunityRolesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function updateOpportunitiesRoles($opportunitiesRoles, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Opportunities Roles', 'updateOnly', $opportunitiesRoles, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Only create the given opportunity roles.
+     *
+     * @param array       $opportunitiesRoles Array of arrays.
+     * @param string      $dedupeBy
+     * @param array       $args
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/syncOpportunityRolesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function createOpportunitiesRoles($opportunitiesRoles, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Opportunities Roles', 'createOnly', $opportunitiesRoles, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Create or update the given opportunity roles.
+     *
+     * @param array        $opportunitiesRoles Array of arrays.
+     * @param string       $dedupeBy
+     * @param array        $args
+     * @param bool|false   $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/syncOpportunityRolesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function createOrUpdateOpportunitiesRoles($opportunitiesRoles, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Opportunities Roles', 'createOrUpdate', $opportunitiesRoles, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Only update the given opportunities.
+     *
+     * @param array       $opportunities Array of arrays.
+     * @param string      $dedupeBy
+     * @param array       $args
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/syncOpportunitiesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function updateOpportunities($opportunities, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Opportunities', 'updateOnly', $opportunities, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Only create the given opportunities.
+     *
+     * @param array       $opportunities Array of arrays.
+     * @param string      $dedupeBy
+     * @param array       $args
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/syncOpportunitiesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function createOpportunities($opportunities, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Opportunities', 'createOnly', $opportunities, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Create or update the given opportunities.
+     *
+     * @param array        $opportunities Array of arrays.
+     * @param string       $dedupeBy
+     * @param array        $args
+     * @param bool|false   $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/syncOpportunitiesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function createOrUpdateOpportunities($opportunities, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Opportunities', 'createOrUpdate', $opportunities, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Only update the given companies.
+     *
+     * @param array       $companies Array of arrays.
+     * @param string      $dedupeBy
+     * @param array       $args
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Companies/syncCompaniesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function updateCompanies($companies, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Companies', 'updateOnly', $companies, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Only create the given companies.
+     *
+     * @param array       $companies Array of arrays.
+     * @param string      $dedupeBy
+     * @param array       $args
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Companies/syncCompaniesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function createCompanies($companies, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Companies', 'createOnly', $companies, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Create or update the given companies.
+     *
+     * @param array        $companies Array of arrays.
+     * @param string       $dedupeBy
+     * @param array        $args
+     * @param bool|false   $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Companies/syncCompaniesUsingPOST
+     *
+     * @return GetLeadsResponse
+     */
+    public function createOrUpdateCompanies($companies, $dedupeBy = 'dedupeFields', $args = array(), $returnRaw = false) {
+        return $this->createOrUpdateObjects('Companies', 'createOrUpdate', $companies, $dedupeBy, $args, $returnRaw);
+    }
+
+    /**
+     * Generic method to create or update Marketo objects.
+     *
+     * @param string      $objectName
+     * @param string      $action     Should be createOnly, updateOnly, or createOrUpdate.
+     * @param array       $records    Array of arrays.
+     * @param string      $dedupeBy
+     * @param array       $args
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @return GetLeadsResponse
+
+     */
+    private function createOrUpdateObjects($objectName, $action, $records, $dedupeBy, $args = array(), $returnRaw = false) {
+        if (!isset($this->marketoObjects[$objectName])) {
+            throw new \Exception('createOrUpdate() Expected parameter $objectName, to be a valid Marketo object '  . "but $objectName provided");
+        };
+
+        $args['objectName'] = $this->marketoObjects[$objectName];
+        $args['action'] = $action;
+        $args['input'] = $records;
+        $args['dedupeBy'] = $dedupeBy;
+
+        return $this->getResult('createOrUpdateObject', $args, false, $returnRaw);
     }
 
     /**
@@ -265,6 +463,7 @@ class Client extends GuzzleClient
      *
      * @param int|array $ids  Filter by one or more IDs
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/get-multiple-lists/
      *
@@ -284,6 +483,7 @@ class Client extends GuzzleClient
      *
      * @param int   $id
      * @param array $args
+     * @param bool  $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/get-list-by-id/
      *
@@ -303,6 +503,7 @@ class Client extends GuzzleClient
      * @param string $filterValues Comma separated list of filter values
      * @param array  $fields       Array of field names to be returned in the response
      * @param string $nextPageToken
+     * @param bool   $returnRaw
      * @link http://developers.marketo.com/documentation/rest/get-multiple-leads-by-filter-type/
      *
      * @return GetLeadsResponse
@@ -332,6 +533,7 @@ class Client extends GuzzleClient
      * @param string $filterType  One of the supported filter types, e.g. id, cookie or email. See Marketo's documentation for all types.
      * @param string $filterValue The value to filter by
      * @param array  $fields      Array of field names to be returned in the response
+     * @param bool   $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/get-multiple-leads-by-filter-type/
      *
@@ -352,6 +554,9 @@ class Client extends GuzzleClient
     /**
      * Get lead partitions.
      *
+     * @param array $args
+     * @param bool $returnRaw
+     *
      * @link http://developers.marketo.com/documentation/rest/get-lead-partitions/
      *
      * @return GetLeadPartitionsResponse
@@ -366,6 +571,7 @@ class Client extends GuzzleClient
      *
      * @param int   $listId
      * @param array $args
+     * @param bool  $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/get-multiple-leads-by-list-id/
      *
@@ -384,6 +590,7 @@ class Client extends GuzzleClient
      * @param int   $id
      * @param array $fields
      * @param array $args
+     * @param bool  $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/get-lead-by-id/
      *
@@ -406,6 +613,7 @@ class Client extends GuzzleClient
      * @param int       $listId List ID
      * @param int|array $id     Lead ID or an array of Lead IDs
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/member-of-list/
      *
@@ -424,6 +632,7 @@ class Client extends GuzzleClient
      *
      * @param int   $id
      * @param array $args
+     * @param bool  $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/get-campaign-by-id/
      *
@@ -441,6 +650,7 @@ class Client extends GuzzleClient
      *
      * @param int|array $ids  A single Campaign ID or an array of Campaign IDs
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/get-multiple-campaigns/
      *
@@ -461,6 +671,7 @@ class Client extends GuzzleClient
      * @param int       $listId List ID
      * @param int|array $leads  Either a single lead ID or an array of lead IDs
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/add-leads-to-list/
      *
@@ -480,6 +691,7 @@ class Client extends GuzzleClient
      * @param int       $listId List ID
      * @param int|array $leads  Either a single lead ID or an array of lead IDs
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/remove-leads-from-list/
      *
@@ -498,10 +710,11 @@ class Client extends GuzzleClient
      *
      * @param int|array $leads  Either a single lead ID or an array of lead IDs
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/delete-lead/
      *
-     * @return DeleteLeadResponse
+     * @return \CSD\Marketo\Response\DeleteLeadResponse
      */
     public function deleteLead($leads, $args = array(), $returnRaw = false)
     {
@@ -517,6 +730,7 @@ class Client extends GuzzleClient
      * @param int|array $leads  Either a single lead ID or an array of lead IDs
      * @param array     $tokens Key value array of tokens to send new values for.
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/request-campaign/
      *
@@ -541,9 +755,10 @@ class Client extends GuzzleClient
      * Schedule a campaign
      *
      * @param int         $id      Campaign ID
-     * @param DateTime    $runAt   The time to run the campaign. If not provided, campaign will be run in 5 minutes.
+     * @param \DateTime   $runAt   The time to run the campaign. If not provided, campaign will be run in 5 minutes.
      * @param array       $tokens  Key value array of tokens to send new values for.
      * @param array       $args
+     * @param bool        $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/schedule-campaign/
      *
@@ -570,6 +785,7 @@ class Client extends GuzzleClient
      * @param int       $id
      * @param string    $cookie
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/rest/associate-lead/
      *
@@ -633,8 +849,8 @@ class Client extends GuzzleClient
      * Update an editable section in an email
      *
      * @param int       $emailId
-     * @param string    $htmlId
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/asset-api/update-email-content-by-id/
      *
@@ -653,6 +869,7 @@ class Client extends GuzzleClient
      * @param int       $emailId
      * @param string    $htmlId
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/asset-api/update-email-content-in-editable-section/
      *
@@ -670,12 +887,12 @@ class Client extends GuzzleClient
      * Approve an email
      *
      * @param int       $emailId
-     * @param string    $htmlId
      * @param array     $args
+     * @param bool      $returnRaw
      *
      * @link http://developers.marketo.com/documentation/asset-api/approve-email-by-id/
      *
-     * @return approveEmail
+     * @return \CSD\Marketo\Response\ApproveEmailResponse
      */
     public function approveEmail($emailId, $args = array(), $returnRaw = false)
     {
@@ -685,11 +902,123 @@ class Client extends GuzzleClient
     }
 
     /**
+     * Get lead activities.
+     *
+     * @param string       $nextPageToken
+     *   Next page token @see: `::getPagingToken`
+     * @param string|array $leads
+     * @param string|array $activityTypeIds
+     *   Activity Types @see: `::getActivityTypes`.
+     * @param array        $args
+     * @param bool         $returnRaw
+     *
+     * @link http://developers.marketo.com/documentation/rest/get-lead-activities/
+     *
+     * @return \CSD\Marketo\Response|string
+     * @see  getPagingToken
+     */
+    public function getLeadActivity($nextPageToken, $leads, $activityTypeIds, $args = array(), $returnRaw = false) {
+        $args['nextPageToken'] = $nextPageToken;
+        $args['leadIds'] = count((array) $leads) ? implode(',', (array)$leads) : '';
+        $args['activityTypeIds'] = count((array) $activityTypeIds) ? implode(',', (array)$activityTypeIds) : '';
+
+        return $this->getResult('getLeadActivity', $args, true, $returnRaw);
+    }
+
+    /**
+     * Describe the leads object
+     *
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Leads/describeUsingGET_2
+     *
+     * @return Response
+     */
+    public function describeLeads($returnRaw = false) {
+        return $this->describeObject('Leads', $returnRaw);
+    }
+
+    /**
+     * Describe the opportunities object
+     *
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/describeUsingGET_3
+     *
+     * @return Response
+     */
+    public function describeOpportunities($returnRaw = false) {
+        return $this->describeObject('Opportunities', $returnRaw);
+    }
+
+    /**
+     * Describe the opportunities roles object.
+     *
+     * @param bool|false  $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Opportunities/describeOpportunityRoleUsingGET
+     *
+     * @return Response
+     */
+    public function describeOpportunityRoles($returnRaw = false) {
+        return $this->describeObject('Opportunities Roles', $returnRaw);
+    }
+
+    /**
+     * Describe the companies object.
+     *
+     * @param bool|false $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Companies/describeUsingGET
+     *
+     * @return Response
+     */
+    public function describeCompanies($returnRaw = false) {
+        return $this->describeObject('Companies', $returnRaw);
+    }
+
+    /**
+     * Describe the Sales Persons object.
+     *
+     * @param bool|false $returnRaw
+     * @throws \Exception
+     *
+     * @link http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Sales_Persons/describeUsingGET_4
+     *
+     * @return Response
+     */
+    public function describeSalesPersons($returnRaw = false) {
+        return $this->describeObject('Sales Persons', $returnRaw);
+    }
+
+    /**
+     * Generic method to describe a Marketo object.
+     *
+     * @param string      $objectName
+     * @param bool|false  $returnRaw
+     * @return Response
+     * @throws \Exception
+     */
+    private function describeObject($objectName, $returnRaw = false) {
+        if (!isset($this->marketoObjects[$objectName])) {
+            throw new \Exception('describeObject() Expected parameter $objectName, to be a valid Marketo object '  . "but $objectName provided");
+        };
+
+        $args['objectName'] = $this->marketoObjects[$objectName];
+        return $this->getResult('describeObject', $args, false, $returnRaw);
+    }
+
+    /**
      * Internal helper method to actually perform command.
      *
      * @param string $command
      * @param array  $args
      * @param bool   $fixArgs
+     * @param bool   $returnRaw
      *
      * @return \CSD\Marketo\Response|string
      */

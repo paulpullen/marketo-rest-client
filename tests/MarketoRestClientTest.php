@@ -30,13 +30,15 @@ class MarketoSoapClientTest extends GuzzleTestCase {
     /**
      * Gets the marketo rest client.
      *
-     * @return \CSD\Marketo\ClientInterface
+     * @return \CSD\Marketo\Client
      */
     private function _getClient() {
 
         static $client = FALSE;
 
-        if ($client) return $client;
+        if ($client instanceof Client) {
+            return $client;
+        }
 
         $client = Client::factory([
             'url' => $this->getServer()->getUrl(),
@@ -146,4 +148,50 @@ class MarketoSoapClientTest extends GuzzleTestCase {
 
         return $responses;
     }
+
+    public function testDescribeLeads() {
+        // Queue up a response for describeLeads request.
+        $this->getServer()->enqueue($this->generateResponses(200,'{"requestId":"fb0#157b1501f31","result":[{"id":48,"displayName":"First Name","dataType":"string","length":255,"rest":{"name":"firstName","readOnly":false},"soap":{"name":"FirstName","readOnly":false}},{"id":50,"displayName":"Last Name","dataType":"string","length":255,"rest":{"name":"lastName","readOnly":false},"soap":{"name":"LastName","readOnly":false}},{"id":51,"displayName":"Email Address","dataType":"email","length":255,"rest":{"name":"email","readOnly":false},"soap":{"name":"Email","readOnly":false}},{"id":60,"displayName":"Address","dataType":"text","rest":{"name":"address","readOnly":false},"soap":{"name":"Address","readOnly":false}}],"success":true}'));
+
+        $client = $this->_getClient();
+        $leadFields = $client->describeLeads()->getResult();
+
+        self::assertEquals($leadFields[0]['displayName'], 'First Name');
+    }
+
+    public function testGetActivityTypes() {
+        // Queue up a response for getActivityTypes request.
+        $this->getServer()->enqueue($this->generateResponses(200,'{"requestId":"6e78#148ad3b76f1","success":true,"result":[{"id":2,"name":"Fill Out Form","description":"User fills out and submits form on web page","primaryAttribute":{"name":"Webform ID","dataType":"integer"},"attributes":[{"name":"Client IP Address","dataType":"string"},{"name":"Form Fields","dataType":"text"},{"name":"Query Parameters","dataType":"string"},{"name":"Referrer URL","dataType":"string"},{"name":"User Agent","dataType":"string"},{"name":"Webpage ID","dataType":"integer"}]}]}'));
+
+        $client = $this->_getClient();
+        /** @var \CSD\Marketo\Response $response */
+        $response = $client->getActivityTypes();
+
+        self::assertTrue($response->isSuccess());
+        self::assertNull($response->getError());
+        self::assertEquals('Fill Out Form', $response->getResult()[0]['name']);
+    }
+
+    public function testGetLeadActivity() {
+        // Queue up a response for getActivityTypes, getPagingToken and getLeadActivity requests.
+        $this->getServer()->enqueue($this->generateResponses(200,[
+            '{"requestId":"6e78#148ad3b76f1","success":true,"result":[{"id":2,"name":"Fill Out Form","description":"User fills out and submits form on web page","primaryAttribute":{"name":"Webform ID","dataType":"integer"},"attributes":[{"name":"Client IP Address","dataType":"string"},{"name":"Form Fields","dataType":"text"},{"name":"Query Parameters","dataType":"string"},{"name":"Referrer URL","dataType":"string"},{"name":"User Agent","dataType":"string"},{"name":"Webpage ID","dataType":"integer"}]}]}',
+            '{"requestId":"f84c#157b16681eb","success":true,"nextPageToken":"JXBIK3O6SUWULQ12345678Y57ZJCBBZRGHQV57IZSKSLYLLU6PPQ===="}',
+            '{"requestId":"24fd#15188a88d7f","result":[{"id":102988,"leadId":1,"activityDate":"2015-01-16T23:32:19Z","activityTypeId":1,"primaryAttributeValueId":71,"primaryAttributeValue":"localhost/munchkintest2.html","attributes":[{"name":"Client IP Address","value":"10.0.19.252"},{"name":"Query Parameters","value":""},{"name":"Referrer URL","value":""},{"name":"User Agent","value":"Mozilla/5.0(Windows NT6.1;WOW64)AppleWebKit/537.36(KHTML,like Gecko)Chrome/39.0.2171.95Safari/537.36"},{"name":"Webpage URL","value":"/munchkintest2.html"}]}],"success":true,"nextPageToken":"WQV2VQVPPCKHC6AQYVK7JDSA3J62DUSJ3EXJGDPTKPEBFW3SAVUA====","moreResult":false}',
+        ]));
+
+        $client = $this->_getClient();
+        // Get activity types, needed for $activityTypesIds.
+        $activity_types = $client->getActivityTypes()->getResult();
+        // Get only the ids of the activity types.
+        $activity_types_ids = array_map(function ($type) {return $type['id'];}, $activity_types);
+        /** @var \CSD\Marketo\Response $response */
+        $response = $client->getLeadActivity($client->getPagingToken(date('c'))->getNextPageToken(), [1], array_slice($activity_types_ids, 0, 10));
+
+        self::assertTrue($response->isSuccess());
+        self::assertNull($response->getError());
+        self::assertEquals('1', $response->getResult()[0]['activityTypeId']);
+        self::assertEquals('localhost/munchkintest2.html', $response->getResult()[0]['primaryAttributeValue']);
+    }
+
 }
