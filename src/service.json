@@ -273,6 +273,19 @@
             "parameters": {},
             "responseModel": "baseResponse",
             "responseClass": "CSD\\Marketo\\Response"
+        },
+        "getLeadActivity": {
+            "httpMethod": "GET",
+            "uri": "activities.json",
+            "parameters": {
+                "activityTypeIds": {"location": "query"},
+                "nextPageToken": {"location": "query"},
+                "batchSize": {"location": "query"},
+                "listId": {"location": "query"},
+                "leadIds": {"location": "query"}
+            },
+            "responseModel": "baseResponse",
+            "responseClass": "CSD\\Marketo\\Response"
         }
     },
     "models": {
