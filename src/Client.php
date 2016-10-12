@@ -902,6 +902,30 @@ class Client extends GuzzleClient
     }
 
     /**
+     * Get lead activities.
+     *
+     * @param string       $nextPageToken
+     *   Next page token @see: `::getPagingToken`
+     * @param string|array $leads
+     * @param string|array $activityTypeIds
+     *   Activity Types @see: `::getActivityTypes`.
+     * @param array        $args
+     * @param bool         $returnRaw
+     *
+     * @link http://developers.marketo.com/documentation/rest/get-lead-activities/
+     *
+     * @return \CSD\Marketo\Response|string
+     * @see  getPagingToken
+     */
+    public function getLeadActivity($nextPageToken, $leads, $activityTypeIds, $args = array(), $returnRaw = false) {
+        $args['nextPageToken'] = $nextPageToken;
+        $args['leadIds'] = count((array) $leads) ? implode(',', (array)$leads) : '';
+        $args['activityTypeIds'] = count((array) $activityTypeIds) ? implode(',', (array)$activityTypeIds) : '';
+
+        return $this->getResult('getLeadActivity', $args, true, $returnRaw);
+    }
+
+    /**
      * Describe the leads object
      *
      * @param bool|false  $returnRaw

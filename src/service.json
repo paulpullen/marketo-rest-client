@@ -266,6 +266,26 @@
                 "dedupeBy": {"location": "json"}
             },
             "responseClass": "CSD\\Marketo\\Response\\GetLeadsResponse"
+        },
+        "getActivityTypes": {
+            "httpMethod": "GET",
+            "uri": "activities/types.json",
+            "parameters": {},
+            "responseModel": "baseResponse",
+            "responseClass": "CSD\\Marketo\\Response"
+        },
+        "getLeadActivity": {
+            "httpMethod": "GET",
+            "uri": "activities.json",
+            "parameters": {
+                "activityTypeIds": {"location": "query"},
+                "nextPageToken": {"location": "query"},
+                "batchSize": {"location": "query"},
+                "listId": {"location": "query"},
+                "leadIds": {"location": "query"}
+            },
+            "responseModel": "baseResponse",
+            "responseClass": "CSD\\Marketo\\Response"
         }
     },
     "models": {
