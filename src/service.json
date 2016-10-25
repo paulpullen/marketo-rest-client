@@ -276,9 +276,10 @@
             "uri": "/rest/v1/{objectName}/delete.json",
             "parameters": {
                 "objectName": {"location": "uri"},
-                "input": {"location": "json"},
+                "deleteBy": {"location": "json"},
+                "input": {"location": "json"}
             },
-            "responseClass": "CSD\\Marketo\\Response\\Response"
+            "responseClass": "CSD\\Marketo\\Response"
         },
         "getActivityTypes": {
             "httpMethod": "GET",

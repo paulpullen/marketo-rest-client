@@ -723,15 +723,16 @@ class Client extends GuzzleClient
     }
 
     public function deleteCompanies($records, $args = array(), $returnRaw = false) {
-        return $this->deleteObject('Companies', $records, $args, $returnRaw);
+        return $this->deleteObject('Companies', $records, 'idField', $args, $returnRaw);
     }
 
-    private function deleteObject($objectName, $records, $args = array(), $returnRaw = false) {
+    private function deleteObject($objectName, $records, $deleteBy = 'idField', $args = array(), $returnRaw = false) {
         if (!isset($this->marketoObjects[$objectName])) {
             throw new \Exception('deleteObject() Expected parameter $objectName, to be a valid Marketo object '  . "but $objectName provided");
         };
 
         $args['objectName'] = $this->marketoObjects[$objectName];
+        $args['deleteBy'] = $deleteBy;
         $args['input'] = $records;
 
         return $this->getResult('deleteObject', $args, false, $returnRaw);
@@ -1039,6 +1040,7 @@ class Client extends GuzzleClient
      */
     private function getResult($command, $args, $fixArgs = false, $returnRaw = false)
     {
+        error_log('$args ' . print_r($args, true));
         $cmd = $this->getCommand($command, $args);
 
         // Marketo expects parameter arrays in the format id=1&id=2, Guzzle formats them as id[0]=1&id[1]=2.
