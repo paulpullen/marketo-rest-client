@@ -375,7 +375,6 @@ class Client extends GuzzleClient
      * @throws \Exception
      *
      * @return GetLeadsResponse
-
      */
     private function createOrUpdateObjects($objectName, $action, $records, $dedupeBy, $args = array(), $returnRaw = false) {
         if (!isset($this->marketoObjects[$objectName])) {
@@ -723,7 +722,15 @@ class Client extends GuzzleClient
         return $this->getResult('deleteLead', $args, true, $returnRaw);
     }
 
-    public function deleteObject($objectName, $records, $args = array(), $returnRaw = false) {
+    public function deleteCompanies($records, $args = array(), $returnRaw = false) {
+        return $this->deleteObject('Companies', $records, $args, $returnRaw);
+    }
+
+    private function deleteObject($objectName, $records, $args = array(), $returnRaw = false) {
+        if (!isset($this->marketoObjects[$objectName])) {
+            throw new \Exception('deleteObject() Expected parameter $objectName, to be a valid Marketo object '  . "but $objectName provided");
+        };
+
         $args['objectName'] = $this->marketoObjects[$objectName];
         $args['input'] = $records;
 
@@ -1006,11 +1013,12 @@ class Client extends GuzzleClient
      * Generic method to describe a Marketo object.
      *
      * @param string      $objectName
+     * @param array       $args
      * @param bool|false  $returnRaw
      * @return Response
      * @throws \Exception
      */
-    private function describeObject($objectName, $returnRaw = false) {
+    private function describeObject($objectName, $args = array(), $returnRaw = false) {
         if (!isset($this->marketoObjects[$objectName])) {
             throw new \Exception('describeObject() Expected parameter $objectName, to be a valid Marketo object '  . "but $objectName provided");
         };
