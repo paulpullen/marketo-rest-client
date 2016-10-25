@@ -790,6 +790,18 @@ class Client extends GuzzleClient
         return $this->deleteObject('Sales Persons', $records, $deleteBy, $args, $returnRaw);
     }
 
+    /**
+     * Generic method to delete a Marketo record.
+     *
+     * @param string $objectName
+     * @param array $records
+     * @param string $deleteBy
+     * @param array $args
+     * @param bool|false $returnRaw
+     * @throws \Exception
+     *
+     * @return Response|string
+     */
     private function deleteObject($objectName, $records, $deleteBy = 'idField', $args = array(), $returnRaw = false) {
         if (!isset($this->marketoObjects[$objectName])) {
             throw new \Exception('deleteObject() Expected parameter $objectName, to be a valid Marketo object '  . "but $objectName provided");
