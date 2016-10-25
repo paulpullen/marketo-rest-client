@@ -1121,7 +1121,6 @@ class Client extends GuzzleClient
      */
     private function getResult($command, $args, $fixArgs = false, $returnRaw = false)
     {
-        error_log('$args ' . print_r($args, true));
         $cmd = $this->getCommand($command, $args);
 
         // Marketo expects parameter arrays in the format id=1&id=2, Guzzle formats them as id[0]=1&id[1]=2.
