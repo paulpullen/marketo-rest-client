@@ -271,6 +271,15 @@
             },
             "responseClass": "CSD\\Marketo\\Response\\GetLeadsResponse"
         },
+        "deleteObject": {
+            "httpMethod": "POST",
+            "uri": "/rest/v1/{objectName}/delete.json",
+            "parameters": {
+                "objectName": {"location": "uri"},
+                "input": {"location": "json"},
+            },
+            "responseClass": "CSD\\Marketo\\Response\\Response"
+        },
         "getActivityTypes": {
             "httpMethod": "GET",
             "uri": "activities/types.json",
