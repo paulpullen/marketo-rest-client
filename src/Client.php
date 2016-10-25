@@ -723,6 +723,13 @@ class Client extends GuzzleClient
         return $this->getResult('deleteLead', $args, true, $returnRaw);
     }
 
+    public function deleteObject($objectName, $records, $args = array(), $returnRaw = false) {
+        $args['objectName'] = $this->marketoObjects[$objectName];
+        $args['input'] = $records;
+
+        return $this->getResult('deleteObject', $args, false, $returnRaw);
+    }
+
     /**
      * Trigger a campaign for one or more leads.
      *
