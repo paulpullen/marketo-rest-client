@@ -836,7 +836,7 @@ class Client extends GuzzleClient
         $args['input'] = [];
         foreach ($activities as $activity) {
             // Validation: Required parameters.
-            foreach (['id', 'leadId', 'primaryAttributeValue', 'activityTypeId'] as $required) {
+            foreach (['leadId', 'activityTypeId', 'primaryAttributeValue'] as $required) {
                 if (!isset($activity[$required])) {
                     throw new \InvalidArgumentException("Required parameter \"{$required}\" is missing.");
                 }
@@ -851,11 +851,10 @@ class Client extends GuzzleClient
 
             // Format required parameters
             $input = [
-                'id' => (int) $activity['id'], // Custom activity id
                 'leadId' => (int) $activity['leadId'],
+                'activityTypeId' => (int) $activity['activityTypeId'],
                 'primaryAttributeValue' => (string) $activity['primaryAttributeValue'],
                 'activityDate' => $activity['activityDate']->format('c'),
-                'activityTypeId' => (int) $activity['activityTypeId'],
             ];
 
             // Optional parameters

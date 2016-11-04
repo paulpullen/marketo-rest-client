@@ -198,7 +198,7 @@
             "httpMethod": "POST",
             "uri": "activities/external.json",
             "parameters": {
-                "input": {"location": "query"}
+                "input": {"location": "json"}
             },
             "responseClass": "CSD\\Marketo\\Response\\AddCustomActivitiesResponse"
         },
