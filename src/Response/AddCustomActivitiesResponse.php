@@ -21,13 +21,13 @@ class AddCustomActivitiesResponse extends Response
     /**
      * Get the status of the custom activity. If no custom activity ID is given, it returns the status of the first one.
      *
-     * @param $id
+     * @param int|null $id
      * @return bool
      */
-    public function getStatus($id)
+    public function getStatus($id = null)
     {
         if ($this->isSuccess()) {
-            if (!$id) {
+            if (is_null($id)) {
                 $result = $this->getResult();
                 return $result[0]['status'];
             }
