@@ -12,6 +12,7 @@ namespace CSD\Marketo;
 
 // Guzzle
 use CommerceGuys\Guzzle\Plugin\Oauth2\Oauth2Plugin;
+use CSD\Marketo\Response\AddCustomActivitiesResponse;
 use CSD\Marketo\Response\GetLeadChanges;
 use CSD\Marketo\Response\GetPagingToken;
 use Guzzle\Common\Collection;
@@ -821,15 +822,43 @@ class Client extends GuzzleClient
     }
 
     /**
-     * Add 1+ custom activities.
+     * Add 1+ custom activities to a lead. Each activity added may be for the same or different lead.
      *
      * @see http://developers.marketo.com/rest-api/lead-database/activities/
      * @see http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#/Activities/addCustomActivityUsingPOST
      *
+     * @example: Here's some examples of what the $activities parameter may look like:
+     * $activities = [
+     *     [ // Example of minimum set of attributes for an activity
+     *         'leadId' => 4,
+     *         'activityTypeId' => 100002, // Created ahead of time in Marketo Portal Admin
+     *         'primaryAttributeValue' => 'FooBar',
+     *     ],
+     *     [ // Example of all optional attributes used
+     *         'leadId' => 6,
+     *         'activityTypeId' => 100003, // Created ahead of time in Marketo Portal Admin
+     *         'primaryAttributeValue' => 42,
+     *         'activityDate' => new \DateTime('+1 day'),
+     *         'apiName' => 'FooBar',
+     *         'status' => 'updated',
+     *         'attributes' => [
+     *             [
+     *                 'name' => 'quantity',
+     *                 'value' => 3,
+     *             ],
+     *             [
+     *                 'name' => 'price',
+     *                 'value' => 123.45,
+     *                 'apiName' => 'FooBar',
+     *             ]
+     *         ]
+     *     ],
+     * ];
+     *
      * @param array $activities Array of arrays.
      * @param array $args
      * @param bool $returnRaw
-     * @return Response|string
+     * @return AddCustomActivitiesResponse
      */
     public function addCustomActivities($activities, $args = array(), $returnRaw = false)
     {

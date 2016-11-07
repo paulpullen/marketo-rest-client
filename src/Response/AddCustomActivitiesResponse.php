@@ -19,7 +19,7 @@ use CSD\Marketo\Response as Response;
 class AddCustomActivitiesResponse extends Response
 {
     /**
-     * Get the status of a lead.
+     * Get the status of the custom activity. If no custom activity ID is given, it returns the status of the first one.
      *
      * @param $id
      * @return bool
@@ -27,6 +27,11 @@ class AddCustomActivitiesResponse extends Response
     public function getStatus($id)
     {
         if ($this->isSuccess()) {
+            if (!$id) {
+                $result = $this->getResult();
+                return $result[0]['status'];
+            }
+
             foreach ($this->getResult() as $row) {
                 if ($row['id'] == $id) {
                     return $row['status'];
