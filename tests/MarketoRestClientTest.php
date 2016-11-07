@@ -194,4 +194,98 @@ class MarketoSoapClientTest extends GuzzleTestCase {
         self::assertEquals('localhost/munchkintest2.html', $response->getResult()[0]['primaryAttributeValue']);
     }
 
+    public function testGetAddCustomActivities()
+    {
+        // Queue up some valid responses
+        $this->getServer()->enqueue($this->generateResponses(200,[
+            '{"requestId":"16b08#1583f618888","result":[{"id":13847522,"status":"added"}],"success":true}',
+            '{"requestId":"16b08#1583f618889","result":[{"id":13847165,"status":"added"},{"id":13847290,"status":"updated"}],"success":true}',
+        ]));
+
+        $client = $this->_getClient();
+
+        // Negative use case
+        $test = function() use ($client) {
+            $activities = [[]]; // Missing all required array keys
+            $response = $client->addCustomActivities($activities);
+        };
+        $this->assertExceptionThrown($test);
+
+        // Negative use case
+        $test = function() use ($client) {
+            $activities = [
+                [
+                    'leadId' => 4,
+                    'activityTypeId' => 100002,
+                    // Missing 'primaryAttributeValue' parameter
+                ]
+            ];
+            $response = $client->addCustomActivities($activities);
+        };
+        $this->assertExceptionThrown($test);
+
+        // Positive use case
+        $activities = [
+            [ // Example of minimum set of attributes for an activity
+                'leadId' => 4,
+                'activityTypeId' => 100002,
+                'primaryAttributeValue' => 'FooBar'
+            ]
+        ];
+        $response = $client->addCustomActivities($activities);
+        $this->assertTrue(is_object($response));
+        $this->assertEquals(\CSD\Marketo\Response\AddCustomActivitiesResponse::class, get_class($response));
+        $this->assertTrue($response->isSuccess());
+        $this->assertEquals('added', $response->getStatus());
+
+        // Positive use case
+        $activities = [
+            [ // Example of minimum set of attributes for an activity
+                'leadId' => 4,
+                'activityTypeId' => 100002,
+                'primaryAttributeValue' => 'FooBar',
+            ],
+            [ // Example of all optional attributes used
+                'leadId' => 6,
+                'activityTypeId' => 100003,
+                'primaryAttributeValue' => 42,
+                'activityDate' => new \DateTime('+1 day'),
+                'apiName' => 'FooBar',
+                'status' => 'updated',
+                'attributes' => [
+                    [
+                        'name' => 'quantity',
+                        'value' => 3,
+                    ],
+                    [
+                        'name' => 'price',
+                        'value' => 123.45,
+                        'apiName' => 'FooBar',
+                    ]
+                ]
+            ],
+        ];
+        $response = $client->addCustomActivities($activities);
+        $this->assertTrue(is_object($response));
+        $this->assertEquals(\CSD\Marketo\Response\AddCustomActivitiesResponse::class, get_class($response));
+        $this->assertTrue($response->isSuccess());
+        $this->assertEquals('added', $response->getStatus());
+        $this->assertEquals('updated', $response->getStatus(13847290));
+    }
+
+    /**
+     * @param \Closure $closure
+     * @param string $exceptionClass
+     */
+    private function assertExceptionThrown(\Closure $closure, $exceptionClass = 'InvalidArgumentException')
+    {
+        try {
+            $closure();
+        } catch (\Exception $e) {
+            $this->assertEquals($exceptionClass, get_class($e));
+            return;
+        }
+
+        $this->fail($exceptionClass . ' failed to be thrown.');
+    }
 }

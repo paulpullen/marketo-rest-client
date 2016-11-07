@@ -12,6 +12,7 @@ namespace CSD\Marketo;
 
 // Guzzle
 use CommerceGuys\Guzzle\Plugin\Oauth2\Oauth2Plugin;
+use CSD\Marketo\Response\AddCustomActivitiesResponse;
 use CSD\Marketo\Response\GetLeadChanges;
 use CSD\Marketo\Response\GetPagingToken;
 use Guzzle\Common\Collection;
@@ -818,6 +819,115 @@ class Client extends GuzzleClient
         $args['sinceDatetime'] = $sinceDatetime;
 
         return $this->getResult('getPagingToken', $args, false, $returnRaw);
+    }
+
+    /**
+     * Add 1+ custom activities to a lead. Each activity added may be for the same or different lead.
+     *
+     * @see http://developers.marketo.com/rest-api/lead-database/activities/
+     * @see http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#/Activities/addCustomActivityUsingPOST
+     *
+     * @example: Here's some examples of what the $activities parameter may look like:
+     * $activities = [
+     *     [ // Example of minimum set of attributes for an activity
+     *         'leadId' => 4,
+     *         'activityTypeId' => 100002, // Created ahead of time in Marketo Portal Admin
+     *         'primaryAttributeValue' => 'FooBar',
+     *     ],
+     *     [ // Example of all optional attributes used
+     *         'leadId' => 6,
+     *         'activityTypeId' => 100003, // Created ahead of time in Marketo Portal Admin
+     *         'primaryAttributeValue' => 42,
+     *         'activityDate' => new \DateTime('+1 day'),
+     *         'apiName' => 'FooBar',
+     *         'status' => 'updated',
+     *         'attributes' => [
+     *             [
+     *                 'name' => 'quantity',
+     *                 'value' => 3,
+     *             ],
+     *             [
+     *                 'name' => 'price',
+     *                 'value' => 123.45,
+     *                 'apiName' => 'FooBar',
+     *             ]
+     *         ]
+     *     ],
+     * ];
+     *
+     * @param array $activities Array of arrays.
+     * @param array $args
+     * @param bool $returnRaw
+     * @return AddCustomActivitiesResponse
+     */
+    public function addCustomActivities($activities, $args = array(), $returnRaw = false)
+    {
+        $args['input'] = [];
+        foreach ($activities as $activity) {
+            // Validation: Required parameters.
+            foreach (['leadId', 'activityTypeId', 'primaryAttributeValue'] as $required) {
+                if (!isset($activity[$required])) {
+                    throw new \InvalidArgumentException("Required parameter \"{$required}\" is missing.");
+                }
+            }
+
+            // Validation: Activity date is required by the API, but making it optional here, defaulting to now.
+            if (!isset($activity['activityDate'])) {
+                $activity['activityDate'] = new \DateTime();
+            } elseif (!($activity['activityDate'] instanceof \DateTime)) {
+                throw new \InvalidArgumentException('Required parameter "activityDate" must be a DateTime object.');
+            }
+
+            // Format required parameters
+            $input = [
+                'leadId' => (int) $activity['leadId'],
+                'activityTypeId' => (int) $activity['activityTypeId'],
+                'primaryAttributeValue' => (string) $activity['primaryAttributeValue'],
+                'activityDate' => $activity['activityDate']->format('c'),
+            ];
+
+            // Optional parameters
+            if (isset($activity['apiName'])) {
+                $input['apiName'] = (string) $activity['apiName'];
+            }
+            if (isset($activity['status'])) {
+                $input['status'] = (string) $activity['status'];
+            }
+
+            // The optional 'attributes' parameter has some validation.
+            if (isset($activity['attributes'])) {
+                if (!is_array($activity['attributes'])) {
+                    throw new \InvalidArgumentException('Optional parameter "attributes" must be an array.');
+                }
+
+                $input['attributes'] = []; // Initialize
+                foreach ($activity['attributes'] as $attribute) {
+                    if (!is_array($attribute)) {
+                        throw new \InvalidArgumentException('The "attributes" parameter must contain child array(s).');
+                    }
+                    // Required child parameters
+                    foreach (['name', 'value'] as $required) {
+                        if (!isset($attribute[$required])) {
+                            throw new \InvalidArgumentException("Required array key \"{$required}\" is missing in the \"attributes\" parameter.");
+                        }
+                    }
+                    $inputAttribute = [
+                        'name' => (string) $attribute['name'],
+                        'value' => (string) $attribute['value'],
+                    ];
+                    // Optional child parameters
+                    if (isset($attribute['apiName'])) {
+                        $inputAttribute['apiName'] = (string) $attribute['apiName'];
+                    }
+
+                    $input['attributes'][] = $inputAttribute;
+                }
+            }
+
+            $args['input'][] = $input;
+        }
+
+        return $this->getResult('addCustomActivities', $args, false, $returnRaw);
     }
 
     /**

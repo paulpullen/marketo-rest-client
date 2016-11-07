@@ -194,6 +194,14 @@
             },
             "responseClass": "CSD\\Marketo\\Response\\DeleteLeadResponse"
         },
+        "addCustomActivities": {
+            "httpMethod": "POST",
+            "uri": "activities/external.json",
+            "parameters": {
+                "input": {"location": "json"}
+            },
+            "responseClass": "CSD\\Marketo\\Response\\AddCustomActivitiesResponse"
+        },
         "getPagingToken": {
             "httpMethod": "GET",
             "uri": "activities/pagingtoken.json",
