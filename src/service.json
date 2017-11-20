@@ -8,7 +8,9 @@
             "uri": "leads.json",
             "parameters": {
                 "format": { "location": "postField"},
-                "file": { "location": "postFile"}
+                "file": { "location": "postFile"},
+                "partitionName" : { "location" : "postField"},
+                "listId" : { "location" : "postField"}
             }
         },
         "getBulkUploadStatus": {
@@ -216,7 +218,6 @@
             "parameters": {
                 "nextPageToken": {"location": "query"},
                 "batchSize": {"location": "query"},
-                "nextPageToken": {"location": "query"},
                 "listId": {"location": "query"},
                 "fields": {"location": "query"}
             },
