@@ -470,6 +470,12 @@
 				},
 				"offset": {
 					"location": "query"
+				},
+				"earliestUpdatedAt": {
+					"location": "query"
+				},
+				"latestUpdatedAt": {
+					"location" : "query"
 				}
 			},
 			"responseClass": "CSD\\Marketo\\Response"

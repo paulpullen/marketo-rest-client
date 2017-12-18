@@ -1133,6 +1133,8 @@ class Client extends GuzzleClient
      *  filterType (string): One of 'id', 'programId', 'folderId', 'workspace'
      *  filterValues (string, comma-separated): Values the filterType should use; e.g., 'Workspace name 1,Workspace 2,...'
      *      if we selected a filterType of 'workspace'
+     *  earliestUpdatedAt (ISO-8601 datetime string): Returns programs updated AFTER this date
+     *  latestUpdatedAt (ISO-8601 datetime string): Returns programs updated BEFORE this date
      *
      * @param bool $returnRaw
      * @throws \Exception
@@ -1147,6 +1149,8 @@ class Client extends GuzzleClient
             'offset' => 0,
             //'filterType' => '',
             //'filterValues' => '',
+            //'earliestUpdatedAt' => '',
+            //'latestUpdatedAt' => '',
         );
 
         $args = array_merge($defaults, $args);
