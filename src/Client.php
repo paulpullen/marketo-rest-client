@@ -32,6 +32,7 @@ use CSD\Marketo\Response\GetListResponse;
 use CSD\Marketo\Response\GetListsResponse;
 use CSD\Marketo\Response\IsMemberOfListResponse;
 
+
 /**
  * Guzzle client for communicating with the Marketo.com REST API.
  *
@@ -95,6 +96,76 @@ class Client extends GuzzleClient
 
         return $client;
     }
+
+    /**
+     * Creates a bulk lead extract job
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param array $args ['format' => 'CSV', 'fields' => [], 'columnHeaderNames' => [], 'filter' => []]
+     *
+     * @return Response
+     */
+    public function createBulkLeadExtractJob($args)
+    {
+        return $this->getResult('createBulkLeadExtractJob', $args);
+    }
+
+    /**
+     * Enqueues a bulk lead extract job
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param string $exportId
+     * @throws \Exception
+     * @return Response
+     */
+    public function enqueueBulkLeadExtractJob($exportId)
+    {
+        if(empty($exportId)) {
+            throw new \Exception('Missing exportId!');
+        }
+
+        return $this->getResult('enqueueBulkLeadExtractJob', ['exportId' => $exportId]);
+    }
+
+    /**
+     * Gets a bulk lead extract job's status
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param string $exportId
+     * @return Response
+     * @throws \Exception
+     */
+    public function getBulkLeadExtractJobStatus($exportId)
+    {
+        if(empty($exportId)) {
+            throw new \Exception('Missing exportId!');
+        }
+
+        return $this->getResult('getBulkLeadExtractJobStatus', ['exportId' => $exportId]);
+    }
+
+    /**
+     * Gets the results file of a bulk lead extract job
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param string $exportId
+     * @param bool $returnRaw
+     * @return Response
+     * @throws \Exception
+     */
+    public function getBulkLeadExtractJobResults($exportId, $returnRaw = true)
+    {
+        if(empty($exportId)) {
+            throw new \Exception('Missing exportId!');
+        }
+
+        return $this->getResult('getBulkLeadExtractJobResults', ['exportId' => $exportId], false, $returnRaw);
+    }
+
 
     /**
      * Import Leads via file upload
@@ -1035,7 +1106,7 @@ class Client extends GuzzleClient
      *
      * @link http://developers.marketo.com/documentation/rest/get-lead-activities/
      *
-     * @return \CSD\Marketo\Response|string
+     * @return \CSD\Marketo\Response\GetActivitiesResponse|string
      * @see  getPagingToken
      */
     public function getLeadActivity($nextPageToken, $leads, $activityTypeIds, $args = array(), $returnRaw = false)

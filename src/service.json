@@ -3,6 +3,54 @@
 	"apiVersion": "1",
 	"description": "Service description used for talking to the Marketo.com REST API.",
 	"operations": {
+		"createBulkLeadExtractJob" : {
+			"httpMethod" : "POST",
+			"uri" : "leads/export/create.json",
+			"parameters" : {
+				"fields" : {
+					"location" : "json"
+				},
+				"format" : {
+					"location" : "json"
+				},
+				"columnHeaderNames" : {
+					"location" : "json"
+				},
+				"filter" : {
+					"location" : "json"
+				}
+			},
+			"responseClass": "CSD\\Marketo\\Response"
+		},
+		"enqueueBulkLeadExtractJob" : {
+			"httpMethod" : "POST",
+			"uri" : "leads/export/{exportId}/enqueue.json",
+			"parameters": {
+				"exportId": {
+					"location": "uri"
+				}
+			},
+			"responseClass": "CSD\\Marketo\\Response"
+		},
+		"getBulkLeadExtractJobStatus" : {
+			"httpMethod" : "GET",
+			"uri" : "leads/export/{exportId}/status.json",
+			"parameters" : {
+				"exportId" : {
+					"location" : "uri"
+				}
+			},
+			"responseClass": "CSD\\Marketo\\Response"
+		},
+		"getBulkLeadExtractJobResults" : {
+			"httpMethod" : "GET",
+			"uri" : "leads/export/{exportId}/file.json",
+			"parameters" : {
+				"exportId" : {
+					"location" : "uri"
+				}
+			}
+		},
 		"importLeadsCsv": {
 			"httpMethod": "POST",
 			"uri": "leads.json",
@@ -453,7 +501,7 @@
 				}
 			},
 			"responseModel": "baseResponse",
-			"responseClass": "CSD\\Marketo\\Response"
+			"responseClass": "CSD\\Marketo\\Response\\GetActivitiesResponse"
 		},
 		"getPrograms": {
 			"httpMethod": "GET",
