@@ -166,6 +166,75 @@ class Client extends GuzzleClient
         return $this->getResult('getBulkLeadExtractJobResults', ['exportId' => $exportId], false, $returnRaw);
     }
 
+    /**
+     * Creates a bulk activities extract job
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param array $args ['format' => 'CSV', 'fields' => [], 'columnHeaderNames' => [], 'filter' => []]
+     *
+     * @return Response
+     */
+    public function createBulkActivitiesExtractJob($args)
+    {
+        return $this->getResult('createBulkActivitiesExtractJob', $args);
+    }
+
+    /**
+     * Enqueues a bulk activities extract job
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param string $exportId
+     * @throws \Exception
+     * @return Response
+     */
+    public function enqueueBulkActivitiesExtractJob($exportId)
+    {
+        if(empty($exportId)) {
+            throw new \Exception('Missing exportId!');
+        }
+
+        return $this->getResult('enqueueBulkActivitiesExtractJob', ['exportId' => $exportId]);
+    }
+
+    /**
+     * Gets a bulk activities extract job's status
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param string $exportId
+     * @return Response
+     * @throws \Exception
+     */
+    public function getBulkActivitiesExtractJobStatus($exportId)
+    {
+        if(empty($exportId)) {
+            throw new \Exception('Missing exportId!');
+        }
+
+        return $this->getResult('getBulkActivitiesExtractJobStatus', ['exportId' => $exportId]);
+    }
+
+    /**
+     * Gets the results file of a bulk activities extract job
+     *
+     * @see https://developers.marketo.com/rest-api/bulk-extract/bulk-lead-extract/
+     *
+     * @param string $exportId
+     * @param bool $returnRaw
+     * @return Response
+     * @throws \Exception
+     */
+    public function getBulkActivitiesExtractJobResults($exportId, $returnRaw = true)
+    {
+        if(empty($exportId)) {
+            throw new \Exception('Missing exportId!');
+        }
+
+        return $this->getResult('getBulkActivitiesExtractJobResults', ['exportId' => $exportId], false, $returnRaw);
+    }
+
 
     /**
      * Import Leads via file upload

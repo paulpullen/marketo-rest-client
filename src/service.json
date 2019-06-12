@@ -51,6 +51,54 @@
 				}
 			}
 		},
+		"createBulkActivitiesExtractJob" : {
+			"httpMethod" : "POST",
+			"uri" : "activities/export/create.json",
+			"parameters" : {
+				"fields" : {
+					"location" : "json"
+				},
+				"format" : {
+					"location" : "json"
+				},
+				"columnHeaderNames" : {
+					"location" : "json"
+				},
+				"filter" : {
+					"location" : "json"
+				}
+			},
+			"responseClass": "CSD\\Marketo\\Response"
+		},
+		"enqueueBulkActivitiesExtractJob" : {
+			"httpMethod" : "POST",
+			"uri" : "activities/export/{exportId}/enqueue.json",
+			"parameters": {
+				"exportId": {
+					"location": "uri"
+				}
+			},
+			"responseClass": "CSD\\Marketo\\Response"
+		},
+		"getBulkActivitiesExtractJobStatus" : {
+			"httpMethod" : "GET",
+			"uri" : "activities/export/{exportId}/status.json",
+			"parameters" : {
+				"exportId" : {
+					"location" : "uri"
+				}
+			},
+			"responseClass": "CSD\\Marketo\\Response"
+		},
+		"getBulkActivitiesExtractJobResults" : {
+			"httpMethod" : "GET",
+			"uri" : "activities/export/{exportId}/file.json",
+			"parameters" : {
+				"exportId" : {
+					"location" : "uri"
+				}
+			}
+		},
 		"importLeadsCsv": {
 			"httpMethod": "POST",
 			"uri": "leads.json",
